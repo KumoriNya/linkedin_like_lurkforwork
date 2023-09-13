@@ -29,3 +29,50 @@ export function fileToDataUrl(file) {
     reader.readAsDataURL(file);
     return dataUrlPromise;
 }
+
+import { BACKEND_PORT } from './config.js';
+const url = 'http://localhost:'+BACKEND_PORT
+
+export const apiCall = (method, path, payload, success) => {
+    const options = {
+        method: method,
+        headers: {
+            'Content-type': 'application/json',
+        },
+    }
+    if (method === 'GET') {
+        // path = 
+    } else {
+        options.body = JSON.stringify(payload);
+    }
+    if (localStorage.getItem('token')) {
+        options.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
+    }
+
+    fetch(url + path, options)
+        .then((response) => {
+            response.json()
+                .then((data) => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        if (success) {
+                            success(data);
+                        }
+                    }
+                })
+        });
+}
+// const getUsers = new Promise((resolve, reject) => {
+//     fetch(url+"/user")
+//         .then((res) => res.json())
+//         .then((userIds) => {
+//             Promise.all(
+//                 userIds.map((userId) =>
+//                     fetch(`http://localhost:3000/user/${userId}`).then((res) =>
+//                         res.json()
+//                 )
+//             )
+//         ).then((users) => resolve(users));
+//     });
+// });
